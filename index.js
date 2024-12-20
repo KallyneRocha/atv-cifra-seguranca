@@ -22,14 +22,55 @@ function Cifra() {
         output: process.stdout
     });
 
-    rl.question("Digite uma mensagem: ", (inputUsuario) => {
-        try {
-            validaCaracteres(inputUsuario);
-            console.log("Mensagem válida!");
-        } catch (error) {
-            console.error(error.message);
+    function Cifrar(mensagem, chave) {
+        validaCaracteres(mensagem);
+        validaCaracteres(chave);
+
+        let mensagemCifrada = "";
+        for (let i = 0; i < mensagem.length; i++) {
+            const indexMensagem = alfabetoCifra.indexOf(mensagem[i]);
+            const indexChave = alfabetoCifra.indexOf(chave[i % chave.length]);
+
+            // Calcula o índice novo 
+            const novoIndex = (indexMensagem + indexChave) % alfabetoCifra.length;
+            mensagemCifrada += alfabetoCifra[novoIndex];
         }
-        rl.close();
+
+        return mensagemCifrada;
+    }
+
+    function Decifrar(mensagemCifrada, chave) {
+        validaCaracteres(mensagemCifrada);
+        validaCaracteres(chave);
+
+        let mensagemDecifrada = "";
+        for (let i = 0; i < mensagemCifrada.length; i++) {
+            const indexMensagemCifrada = alfabetoCifra.indexOf(mensagemCifrada[i]);
+            const indexChave = alfabetoCifra.indexOf(chave[i % chave.length]);
+
+            // Calcula o índice original
+            const novoIndex = (indexMensagemCifrada - indexChave + alfabetoCifra.length) % alfabetoCifra.length;
+            mensagemDecifrada += alfabetoCifra[novoIndex];
+        }
+
+        return mensagemDecifrada;
+    }
+
+    rl.question("Digite a mensagem a ser cifrada: ", (mensagem) => {
+        rl.question("Digite a chave: ", (chave) => {
+            try {
+                // Chamando função para cifrar
+                const mensagemCifrada = Cifrar(mensagem, chave);
+                console.log(`Mensagem Cifrada: ${mensagemCifrada}`);
+
+                // Chamando função para decifrar
+                const mensagemDecifrada = Decifrar(mensagemCifrada, chave);
+                console.log(`Mensagem Decifrada: ${mensagemDecifrada}`);
+            } catch (error) {
+                console.error(error.message);
+            }
+            rl.close();
+        });
     });
 }
 
